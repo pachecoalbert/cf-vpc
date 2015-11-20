@@ -1,10 +1,10 @@
 # cf-vpc
 This repo provides pyplate template engine scripts to create a VPC with the following structure.
 
-Public ELB Tier
-Private ELB Tier
-Private App Tier
-Private DB Tier
+- Public ELB Tier
+- Private ELB Tier
+- Private App Tier
+- Private DB Tier
 
 It used 4 AZs and build all the Routes and NAT for resoruces in teh private subnets to communicate externaly.
 
