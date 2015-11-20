@@ -22,69 +22,8 @@ Region: us-east-1
 
 
 # Pulled from Stack Outoput
-AZs:
-- a
-- c
-- d
-- e
-InternetGateway: igw-04f6ef61
-PrivatRouteTables:
-- rtb-5a413d3e
-- rtb-20413d44
-- rtb-24413d40
-- rtb-5b413d3f
-PrivateRouteTableA: rtb-5a413d3e
-PrivateRouteTableC: rtb-20413d44
-PrivateRouteTableD: rtb-24413d40
-PrivateRouteTableE: rtb-5b413d3f
-PublicRouteTable: rtb-26413d42
-Region: us-east-1
-VpcCidr: 100.64.16.0/20
-VpcId: vpc-47b93a23
-appprivateA: subnet-3a425163
-appprivateC: subnet-abc5c780
-appprivateD: subnet-7c22db0a
-appprivateE: subnet-1a46f127
-appprivateSubnets:
-- subnet-3a425163
-- subnet-abc5c780
-- subnet-7c22db0a
-- subnet-1a46f127
-azA: a
-azC: c
-azD: d
-azE: e
-dbprivateA: subnet-3f425166
-dbprivateC: subnet-55c5c77e
-dbprivateD: subnet-7f22db09
-dbprivateE: subnet-1546f128
-dbprivateSubnets:
-- subnet-3f425166
-- subnet-55c5c77e
-- subnet-7f22db09
-- subnet-1546f128
-elbprivateA: subnet-3c425165
-elbprivateC: subnet-a9c5c782
-elbprivateD: subnet-7d22db0b
-elbprivateE: subnet-1b46f126
-elbprivateSubnets:
-- subnet-3c425165
-- subnet-a9c5c782
-- subnet-7d22db0b
-- subnet-1b46f126
-elbpublicA: subnet-3d425164
-elbpublicC: subnet-54c5c77f
-elbpublicD: subnet-7e22db08
-elbpublicE: subnet-1846f125
-elbpublicSubnets:
-- subnet-3d425164
-- subnet-54c5c77f
-- subnet-7e22db08
-- subnet-1846f125
-environment: dev
-huitAssetid: 00910
-lastmodifiedby: TBD
-product: hcdoVPC
+
+
 
 
 

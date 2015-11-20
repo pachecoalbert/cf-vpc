@@ -2,6 +2,7 @@
 
 
 # Import Python modules
+import sys
 from cfn_pyplates.core import *
 import pprint
 
