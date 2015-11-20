@@ -6,7 +6,7 @@ This repo provides pyplate template engine scripts to create a VPC with the foll
 - Private App Tier
 - Private DB Tier
 
-It used 4 AZs and build all the Routes and NAT for resoruces in teh private subnets to communicate externaly.
+It used 4 AZs and builds all the Routes and NAT for resoruces in the private subnets to communicate externaly.
 
 Follow the below steps to Create the VPC.
 
