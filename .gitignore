@@ -1,3 +1,4 @@
 output/*.json
 output/*.yaml
 output/*.yml
+*.pyc
