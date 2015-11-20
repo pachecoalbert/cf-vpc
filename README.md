@@ -52,7 +52,7 @@ Generate cloud formation jason template
 cd ./cf-vpc/
 ```
 
-Generate the cloud formation template via cfn pyplates
+- Generate the cloud formation template via cfn pyplates
 ```
 cfn_py_generate ./stacks/nat.py ./output/nat-stack.json -o ./output/nat_aggr.yaml 
 ```
