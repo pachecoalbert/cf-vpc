@@ -105,9 +105,10 @@ vpc_subnets_dict = {
 region_num = options['Region'][-1:]
 
 # Creat the VPC
-vpc_resource_name = '{0}'.format(account_name_construct)
-tags = append_name_tag_to_default(vpc_resource_name)
-cft.resources.add(Resource('VPC',
+vpc_tag_name = '{0}{1}'.format(account_name_construct,'-standard-vpc')
+vpc_resource_name = vpc_tag_name.replace("-", "")
+tags = append_name_tag_to_default(vpc_tag_name)
+cft.resources.add(Resource(vpc_resource_name,
                            'AWS::EC2::VPC',
                            {
                              'CidrBlock': '{}'.format(network.cidr),
@@ -119,32 +120,46 @@ cft.resources.add(Resource('VPC',
                   )
 
 # Generate CFN Outoputs
-create_output_resource_ref('VpcId', 'VPC','VPC ID of new / updated VPC.')
+create_output_resource_ref('VpcId', vpc_resource_name,'VPC ID of new / updated VPC.')
 create_output_resource_str('VpcCidr', '{}'.format(network.cidr),'VPC CIDR.')
 
-
-# Create the Internet Gateway
-tags = append_name_tag_to_default('InternetGateway')
-cft.resources.add(Resource('InternetGateway',
-                           'AWS::EC2::InternetGateway',
+# Create the VPN Gateway (Do NOT Attatch)
+vpn_gateway_tag_name =  '{0}{1}'.format(account_name_construct,'-VPNGageway')
+vpn_gateway_resource_name = vpn_gateway_tag_name.replace("-", "")
+tags = append_name_tag_to_default(vpn_gateway_tag_name)
+cft.resources.add(Resource(vpn_gateway_resource_name,
+                           'AWS::EC2::VPNGateway',
                            {
-                              #No Properties
+                            "Type" : "ipsec.1",
+                             'Tags': tags
                            })
                  )
 
 # Generate CFN Outoputs
-create_output_resource_ref('InternetGateway', 'InternetGateway','InternetGateway ID .')
+create_output_resource_ref('VPNGateway', vpn_gateway_resource_name,'VPNGateway ID .')
+
+# Create the Internet Gateway
+internet_gateway_tag_name =  '{0}{1}'.format(account_name_construct,'-InternetGageway')
+internet_gateway_resource_name = vpn_gateway_tag_name.replace("-", "")
+tags = append_name_tag_to_default(internet_gateway_tag_name)
+cft.resources.add(Resource(internet_gateway_resource_name,
+                           'AWS::EC2::InternetGateway',
+                           {
+                              'Tags': tags
+                           })
+                 )
+
+# Generate CFN Outoputs
+create_output_resource_ref('InternetGateway', internet_gateway_resource_name,'InternetGateway ID .')
 
 # Attach the Internet Gateway to the VPC
 cft.resources.add(Resource('InternetGatewayAttachment',
                            'AWS::EC2::VPCGatewayAttachment',
                            {
-                             'InternetGatewayId' : ref('InternetGateway'),
-                             'VpcId' : ref('VPC')
+                             'InternetGatewayId' : ref('{}'.format(internet_gateway_resource_name)),
+                             'VpcId' : ref('{}'.format(vpc_resource_name))
                            })
                  )
-
-
 
 # Create variables for Loop to create internal route tables
 internal_route_tables = {}
@@ -167,7 +182,7 @@ for num in range(1, 5):
   cft.resources.add(Resource(internal_route_resource_name,
                            'AWS::EC2::RouteTable',
                            {
-                             'VpcId': ref('VPC'),
+                             'VpcId': ref('{}'.format(vpc_resource_name)),
                              'Tags': tags
                            })
                  )
@@ -189,7 +204,7 @@ tags = append_name_tag_to_default(external_route_tag_name)
 cft.resources.add(Resource(external_route_resource_name,
                            'AWS::EC2::RouteTable',
                            {
-                             'VpcId': ref('VPC'),
+                             'VpcId': ref('{}'.format(vpc_resource_name)),
                              'Tags': tags
                            })
                  )
@@ -202,27 +217,48 @@ cft.resources.add(Resource(pub_route_internet_name,
                            'AWS::EC2::Route',
                            {
                              'DestinationCidrBlock' : '0.0.0.0/0',
-                             'GatewayId' : ref('InternetGateway'),
+                             'GatewayId' : ref('{}'.format(internet_gateway_resource_name)),
                              'RouteTableId' : ref('{}'.format(external_route_resource_name)),
                            })
                  )
 
 # Create the DHCP Option group using AWS internal Domain Names and DNS
-cft.resources.add(Resource('DHCPOptions',
+dhcp_tag_name = '{0}{1}'.format(account_name_construct,'-dhcp')
+dhcp_resource_name = dhcp_tag_name.replace("-", "")
+tags = append_name_tag_to_default(vpn_gateway_tag_name)
+cft.resources.add(Resource(dhcp_resource_name,
                            'AWS::EC2::DHCPOptions',
                            {
                               'DomainName': 'ec2.internal',
-                              'DomainNameServers': ['AmazonProvidedDNS']
+                              'DomainNameServers': ['AmazonProvidedDNS'],
+                              'Tags': tags
+                           })
+                 )
+# Generate CFN Outoputs
+create_output_resource_ref('DHCPOptions', dhcp_resource_name,'DHCPOptions ID .')
+
+#  Associate the DHCP Option Group
+cft.resources.add(Resource('VPCDHCPOptionsAssociation',
+                           'AWS::EC2::VPCDHCPOptionsAssociation',
+                           {
+                              "VpcId" : {"Ref" : "{}".format(vpc_resource_name)},
+                              "DhcpOptionsId" : {"Ref" : "{}".format(dhcp_resource_name)}
                            })
                  )
 
 # Create Network ACL for VPC
-cft.resources.add(Resource('NetworkAcl',
+network_acl_tag_name =  '{0}{1}'.format(account_name_construct,'-acl')
+network_acl_resource_name = network_acl_tag_name.replace("-", "")
+tags = append_name_tag_to_default(network_acl_resource_name)
+cft.resources.add(Resource(network_acl_resource_name,
                            'AWS::EC2::NetworkAcl',
                            {
-                             'VpcId': ref('VPC')
+                             'VpcId': ref('{}'.format(vpc_resource_name)),
+                             'Tags': tags
                            })
                  )
+# Generate CFN Outoputs
+create_output_resource_ref('NetworkAcl', network_acl_resource_name,'NetworkAcl ID .')
 
 # Create default network ACL allowing ALL Ingress
 cft.resources.add(Resource('NetworkAclEntryIngress',
@@ -230,7 +266,7 @@ cft.resources.add(Resource('NetworkAclEntryIngress',
                            {
                              'CidrBlock' : '0.0.0.0/0',
                              'Egress' : False,
-                             'NetworkAclId' : ref('NetworkAcl'),
+                             'NetworkAclId' : ref('{}'.format(network_acl_resource_name)),
                              'Protocol' : -1,
                              'RuleAction' : 'allow',
                              'RuleNumber' : 100
@@ -243,7 +279,7 @@ cft.resources.add(Resource('NetworkAclEntryEgress',
                            {
                              'CidrBlock' : '0.0.0.0/0',
                              'Egress' : True,
-                             'NetworkAclId' : ref('NetworkAcl'),
+                             'NetworkAclId' : ref('{}'.format(network_acl_resource_name)),
                              'Protocol' : -1,
                              'RuleAction' : 'allow',
                              'RuleNumber' : 100
@@ -297,7 +333,7 @@ for subnet_name, subnet_list  in vpc_subnets_dict.iteritems():
                                {
                                  'CidrBlock': '{}'.format(subnet.cidr),
                                  'AvailabilityZone': '{}{}'.format(options['Region'],az),
-                                 'VpcId': ref('VPC'),
+                                 'VpcId': ref('{}'.format(vpc_resource_name)),
                                  'Tags': tags
                                })
                      )
@@ -307,6 +343,7 @@ for subnet_name, subnet_list  in vpc_subnets_dict.iteritems():
         route_assoc_resource_name = '{}SubnetRouteAssociation{}'.format(subnet_name,az.upper()).replace("-", "")
         route_table = external_route_resource_name
 
+        # Attache subnet to Route table
         cft.resources.add(Resource(route_assoc_resource_name,
                                    'AWS::EC2::SubnetRouteTableAssociation',
                                    {
@@ -315,10 +352,21 @@ for subnet_name, subnet_list  in vpc_subnets_dict.iteritems():
                                    })
                          )
 
+        # Attach subnet to Network ACL
+        cft.resources.add(Resource(route_assoc_resource_name,
+                                   'AWS::EC2::SubnetNetworkAclAssociation',
+                                   {
+                                    "SubnetId" : ref(subnet_resource_name),
+                                    "NetworkAclId" : { "Ref" : "{}".format(network_acl_resource_name) }
+                                   })
+                         )
+
     # Will NOT be associateing the private subnetts now.  Will do  with Nat stack
     else:
         route_assoc_resource_name = '{}SubnetRouteAssociation{}'.format(subnet_name,az.upper()).replace("-", "")
         route_table = internal_route_tables[az]
+
+        # Attache subnet to Route table
         cft.resources.add(Resource(route_assoc_resource_name,
                                'AWS::EC2::SubnetRouteTableAssociation',
                                {
@@ -327,6 +375,14 @@ for subnet_name, subnet_list  in vpc_subnets_dict.iteritems():
                                })
                      )
 
+        # Attach subnet to Network ACL
+        cft.resources.add(Resource(route_assoc_resource_name,
+                                   'AWS::EC2::SubnetNetworkAclAssociation',
+                                   {
+                                    "SubnetId" : ref(subnet_resource_name),
+                                    "NetworkAclId" : { "Ref" : "{}".format(network_acl_resource_name) }
+                                   })
+                         )
 
 
     # Generate CFN Outoputs

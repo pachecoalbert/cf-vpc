@@ -158,9 +158,9 @@ create_output_resource_ref('NatInstanceProfile', nat_iam_profile_resource_name,'
 
 
 # Security Group for Nat Server instances
-security_group_name =  '{0}{1}'.format(appname_construct,'-management-sg')
-security_group_resource_name = security_group_name.replace("-", "")
-#tags = append_name_tag_to_default(security_group_name)
+security_group_tag_name =  '{0}{1}'.format(appname_construct,'-management-sg')
+security_group_resource_name = security_group_tag_name.replace("-", "")
+tags = append_name_tag_to_default(security_group_tag_name)
 cft.resources.add(Resource(security_group_resource_name,
                            'AWS::EC2::SecurityGroup',
                            {
@@ -172,7 +172,8 @@ cft.resources.add(Resource(security_group_resource_name,
                                    'ToPort': 65535,
                                    "CidrIp": options['VpcCidr']
                                }
-                               ]
+                               ],
+                               "Tags": tags
                            }
                            )
                   )
