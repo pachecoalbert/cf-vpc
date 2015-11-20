@@ -11,7 +11,7 @@ It used 4 AZs and build all the Routes and NAT for resoruces in teh private subn
 Follow the below steps to Create the VPC.
 
 ### VPC
-- Generate cloud formation jason template
+Generate cloud formation jason template
 
 - cd into the repo directory
 ```
@@ -23,7 +23,7 @@ cd ./cf-vpc/
  cfn_py_generate ./stacks/vpc.py ./output/vpc-stack.json -o ./mappings/vpc.yaml
 ```
 
-- Create the vpc stack
+Create the vpc stack
 - Issue the aws cli command to create the vpc stack.  (Be sure to use the correct --profile)
 ```
 aws --region us-east-1 --profile <your_profile> cloudformation create-stack --stack-name admints-dev-standard-vpc --template-body  file://output/vpc-stack.json
@@ -31,8 +31,8 @@ aws --region us-east-1 --profile <your_profile> cloudformation create-stack --st
 
 ### NAT (for above VPC)
 
-- Retrive output variable and gernate yaml mapings
-Cd into the report directoy
+Retrive output variable and gernate yaml mapings
+- Cd into the report directoy
 ```
 cd ./cf-vpc/
 ```
@@ -45,19 +45,19 @@ cat ./mappings/nat.yaml > ./output/nat_aggr.yaml
 ```
 ./bin/get_cfn_output.py admints-dev-standard-vpc cloudhacks >> ./output/nat_aggr.yaml
 ```
-- Generate cloud formation jason template
+Generate cloud formation jason template
 
 - Cd into the report directoy
 ```
 cd ./cf-vpc/
 ```
 
-- Generate the cloud formation template via cfn pyplates
+Generate the cloud formation template via cfn pyplates
 ```
 cfn_py_generate ./stacks/nat.py ./output/nat-stack.json -o ./output/nat_aggr.yaml 
 ```
 
-- Create the vpc stack
+Create the vpc stack
 - Issue the aws cli command to create the vpc stack.  (Be sure to use the correct --profile)
 ```
 aws --region us-east-1 --profile <your_profile> cloudformation create-stack --stack-name admints-dev-standard-nat --template-body  file://output/nat-stack.json --capabilities CAPABILITY_IAM
