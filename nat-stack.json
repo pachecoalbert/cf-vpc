@@ -1,0 +1,377 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "admints-dev-standard NAT stack",
+  "Resources": {
+    "hcdodevinstanceiamrole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "hcdodevinstanceiampolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "NatInstanceRole",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ec2:DescribeInstances*",
+                "ec2:CreateRoute*",
+                "ec2:ReplaceRoute",
+                "ec2:StartInstances"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "logs:*"
+              ],
+              "Resource": "arn:aws:logs:*:*:*",
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "hcdodevinstanceiamrole"
+          }
+        ]
+      }
+    },
+    "hcdodevinstanceprofile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "hcdodevinstanceiamrole"
+          }
+        ]
+      }
+    },
+    "hcdodevmanagementsg": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "ToPort": 65535,
+            "IpProtocol": "tcp",
+            "CidrIp": "100.64.16.0/20",
+            "FromPort": 0
+          }
+        ],
+        "VpcId": "vpc-47b93a23",
+        "GroupDescription": "allows traffic to the app server instances"
+      }
+    },
+    "hcdodevnat1a": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "SourceDestCheck": "false",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoNAT",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "hcdo-dev-nat-1a"
+          }
+        ],
+        "ImageId": "ami-184dc970",
+        "IamInstanceProfile": {
+          "Ref": "hcdodevinstanceprofile"
+        },
+        "InstanceType": "t2.medium",
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "SubnetId": "subnet-3d425164",
+            "GroupSet": [
+              {
+                "Ref": "hcdodevmanagementsg"
+              }
+            ],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },
+    "InternalRouteA": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "InstanceId": {
+          "Ref": "hcdodevnat1a"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": "rtb-5a413d3e"
+      }
+    },
+    "hcdodevnat1c": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "SourceDestCheck": "false",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoNAT",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "hcdo-dev-nat-1c"
+          }
+        ],
+        "ImageId": "ami-184dc970",
+        "IamInstanceProfile": {
+          "Ref": "hcdodevinstanceprofile"
+        },
+        "InstanceType": "t2.medium",
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "SubnetId": "subnet-54c5c77f",
+            "GroupSet": [
+              {
+                "Ref": "hcdodevmanagementsg"
+              }
+            ],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },
+    "InternalRouteC": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "InstanceId": {
+          "Ref": "hcdodevnat1c"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": "rtb-20413d44"
+      }
+    },
+    "hcdodevnat1d": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "SourceDestCheck": "false",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoNAT",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "hcdo-dev-nat-1d"
+          }
+        ],
+        "ImageId": "ami-184dc970",
+        "IamInstanceProfile": {
+          "Ref": "hcdodevinstanceprofile"
+        },
+        "InstanceType": "t2.medium",
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "SubnetId": "subnet-7e22db08",
+            "GroupSet": [
+              {
+                "Ref": "hcdodevmanagementsg"
+              }
+            ],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },
+    "InternalRouteD": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "InstanceId": {
+          "Ref": "hcdodevnat1d"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": "rtb-24413d40"
+      }
+    },
+    "hcdodevnat1e": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "SourceDestCheck": "false",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoNAT",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "hcdo-dev-nat-1e"
+          }
+        ],
+        "ImageId": "ami-184dc970",
+        "IamInstanceProfile": {
+          "Ref": "hcdodevinstanceprofile"
+        },
+        "InstanceType": "t2.medium",
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "SubnetId": "subnet-1846f125",
+            "GroupSet": [
+              {
+                "Ref": "hcdodevmanagementsg"
+              }
+            ],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },
+    "InternalRouteE": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "InstanceId": {
+          "Ref": "hcdodevnat1e"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": "rtb-5b413d3f"
+      }
+    }
+  },
+  "Outputs": {
+    "environment": {
+      "Description": "environment",
+      "Value": "dev"
+    },
+    "huitAssetid": {
+      "Description": "huit_assetid",
+      "Value": "00910"
+    },
+    "lastmodifiedby": {
+      "Description": "lastmodifiedby",
+      "Value": "TBD"
+    },
+    "product": {
+      "Description": "product",
+      "Value": "hcdoNAT"
+    },
+    "Region": {
+      "Description": "Region",
+      "Value": "us-east-1"
+    },
+    "NatIamRole": {
+      "Description": "IAM  Role ID.",
+      "Value": {
+        "Ref": "hcdodevinstanceiamrole"
+      }
+    },
+    "NatIamPolicy": {
+      "Description": "IAM Policy ID.",
+      "Value": {
+        "Ref": "hcdodevinstanceiampolicy"
+      }
+    },
+    "NatInstanceProfile": {
+      "Description": "IAM Profile ID.",
+      "Value": {
+        "Ref": "hcdodevinstanceprofile"
+      }
+    },
+    "NatSecurityGroup": {
+      "Description": "Security Group ID.",
+      "Value": {
+        "Ref": "hcdodevmanagementsg"
+      }
+    },
+    "hcdodevnat1a": {
+      "Description": "Instance ID.",
+      "Value": {
+        "Ref": "hcdodevnat1a"
+      }
+    },
+    "hcdodevnat1c": {
+      "Description": "Instance ID.",
+      "Value": {
+        "Ref": "hcdodevnat1c"
+      }
+    },
+    "hcdodevnat1d": {
+      "Description": "Instance ID.",
+      "Value": {
+        "Ref": "hcdodevnat1d"
+      }
+    },
+    "hcdodevnat1e": {
+      "Description": "Instance ID.",
+      "Value": {
+        "Ref": "hcdodevnat1e"
+      }
+    }
+  }
+}

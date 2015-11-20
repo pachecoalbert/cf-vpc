@@ -1,0 +1,1148 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "admints-dev-standard VPC stack",
+  "Resources": {
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "CidrBlock": "100.64.16.0/20",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "InternetGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "admintsdevstandardprivatert1a": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-private-rt-1a"
+          }
+        ]
+      }
+    },
+    "admintsdevstandardprivatert1c": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-private-rt-1c"
+          }
+        ]
+      }
+    },
+    "admintsdevstandardprivatert1d": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-private-rt-1d"
+          }
+        ]
+      }
+    },
+    "admintsdevstandardprivatert1e": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-private-rt-1e"
+          }
+        ]
+      }
+    },
+    "admintsdevstandardpublicrt": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-public-rt"
+          }
+        ]
+      }
+    },
+    "ExternalRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "admintsdevstandardpublicrt"
+        }
+      }
+    },
+    "DHCPOptions": {
+      "Type": "AWS::EC2::DHCPOptions",
+      "Properties": {
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
+        ],
+        "DomainName": "ec2.internal"
+      }
+    },
+    "NetworkAcl": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        }
+      }
+    },
+    "NetworkAclEntryIngress": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        },
+        "RuleNumber": 100,
+        "Protocol": -1,
+        "Egress": false,
+        "RuleAction": "allow",
+        "CidrBlock": "0.0.0.0/0"
+      }
+    },
+    "NetworkAclEntryEgress": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        },
+        "RuleNumber": 100,
+        "Protocol": -1,
+        "Egress": true,
+        "RuleAction": "allow",
+        "CidrBlock": "0.0.0.0/0"
+      }
+    },
+    "admintsdevstandardappprivate1a1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "100.64.24.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-app-private-1a-1"
+          }
+        ]
+      }
+    },
+    "appprivateSubnetRouteAssociationA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardappprivate1a1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1a"
+        }
+      }
+    },
+    "admintsdevstandardappprivate1c1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1c",
+        "CidrBlock": "100.64.25.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-app-private-1c-1"
+          }
+        ]
+      }
+    },
+    "appprivateSubnetRouteAssociationC": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardappprivate1c1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1c"
+        }
+      }
+    },
+    "admintsdevstandardappprivate1d1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1d",
+        "CidrBlock": "100.64.26.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-app-private-1d-1"
+          }
+        ]
+      }
+    },
+    "appprivateSubnetRouteAssociationD": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardappprivate1d1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1d"
+        }
+      }
+    },
+    "admintsdevstandardappprivate1e1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1e",
+        "CidrBlock": "100.64.27.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-app-private-1e-1"
+          }
+        ]
+      }
+    },
+    "appprivateSubnetRouteAssociationE": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardappprivate1e1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1e"
+        }
+      }
+    },
+    "admintsdevstandarddbprivate1a1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "100.64.28.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-db-private-1a-1"
+          }
+        ]
+      }
+    },
+    "dbprivateSubnetRouteAssociationA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandarddbprivate1a1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1a"
+        }
+      }
+    },
+    "admintsdevstandarddbprivate1c1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1c",
+        "CidrBlock": "100.64.29.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-db-private-1c-1"
+          }
+        ]
+      }
+    },
+    "dbprivateSubnetRouteAssociationC": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandarddbprivate1c1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1c"
+        }
+      }
+    },
+    "admintsdevstandarddbprivate1d1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1d",
+        "CidrBlock": "100.64.30.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-db-private-1d-1"
+          }
+        ]
+      }
+    },
+    "dbprivateSubnetRouteAssociationD": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandarddbprivate1d1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1d"
+        }
+      }
+    },
+    "admintsdevstandarddbprivate1e1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1e",
+        "CidrBlock": "100.64.31.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-db-private-1e-1"
+          }
+        ]
+      }
+    },
+    "dbprivateSubnetRouteAssociationE": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandarddbprivate1e1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1e"
+        }
+      }
+    },
+    "admintsdevstandardelbpublic1a1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "100.64.16.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-public-1a-1"
+          }
+        ]
+      }
+    },
+    "elbpublicSubnetRouteAssociationA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbpublic1a1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardpublicrt"
+        }
+      }
+    },
+    "admintsdevstandardelbpublic1c1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1c",
+        "CidrBlock": "100.64.17.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-public-1c-1"
+          }
+        ]
+      }
+    },
+    "elbpublicSubnetRouteAssociationC": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbpublic1c1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardpublicrt"
+        }
+      }
+    },
+    "admintsdevstandardelbpublic1d1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1d",
+        "CidrBlock": "100.64.18.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-public-1d-1"
+          }
+        ]
+      }
+    },
+    "elbpublicSubnetRouteAssociationD": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbpublic1d1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardpublicrt"
+        }
+      }
+    },
+    "admintsdevstandardelbpublic1e1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1e",
+        "CidrBlock": "100.64.19.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-public-1e-1"
+          }
+        ]
+      }
+    },
+    "elbpublicSubnetRouteAssociationE": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbpublic1e1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardpublicrt"
+        }
+      }
+    },
+    "admintsdevstandardelbprivate1a1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "100.64.20.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-private-1a-1"
+          }
+        ]
+      }
+    },
+    "elbprivateSubnetRouteAssociationA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbprivate1a1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1a"
+        }
+      }
+    },
+    "admintsdevstandardelbprivate1c1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1c",
+        "CidrBlock": "100.64.21.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-private-1c-1"
+          }
+        ]
+      }
+    },
+    "elbprivateSubnetRouteAssociationC": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbprivate1c1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1c"
+        }
+      }
+    },
+    "admintsdevstandardelbprivate1d1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1d",
+        "CidrBlock": "100.64.22.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-private-1d-1"
+          }
+        ]
+      }
+    },
+    "elbprivateSubnetRouteAssociationD": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbprivate1d1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1d"
+        }
+      }
+    },
+    "admintsdevstandardelbprivate1e1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "us-east-1e",
+        "CidrBlock": "100.64.23.0/24",
+        "Tags": [
+          {
+            "Value": "dev",
+            "Key": "environment"
+          },
+          {
+            "Value": "00910",
+            "Key": "huit_assetid"
+          },
+          {
+            "Value": "hcdoVPC",
+            "Key": "product"
+          },
+          {
+            "Value": "TBD",
+            "Key": "lastmodifiedby"
+          },
+          {
+            "Key": "Name",
+            "Value": "admints-dev-standard-elb-private-1e-1"
+          }
+        ]
+      }
+    },
+    "elbprivateSubnetRouteAssociationE": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "admintsdevstandardelbprivate1e1"
+        },
+        "RouteTableId": {
+          "Ref": "admintsdevstandardprivatert1e"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "environment": {
+      "Description": "environment",
+      "Value": "dev"
+    },
+    "huitAssetid": {
+      "Description": "huit_assetid",
+      "Value": "00910"
+    },
+    "lastmodifiedby": {
+      "Description": "lastmodifiedby",
+      "Value": "TBD"
+    },
+    "product": {
+      "Description": "product",
+      "Value": "hcdoVPC"
+    },
+    "Region": {
+      "Description": "Region",
+      "Value": "us-east-1"
+    },
+    "VpcId": {
+      "Description": "VPC ID of new / updated VPC.",
+      "Value": {
+        "Ref": "VPC"
+      }
+    },
+    "VpcCidr": {
+      "Description": "VPC CIDR.",
+      "Value": "100.64.16.0/20"
+    },
+    "InternetGateway": {
+      "Description": "InternetGateway ID .",
+      "Value": {
+        "Ref": "InternetGateway"
+      }
+    },
+    "PrivateRouteTableA": {
+      "Description": "Internal Route Table ID .",
+      "Value": {
+        "Ref": "admintsdevstandardprivatert1a"
+      }
+    },
+    "PrivateRouteTableC": {
+      "Description": "Internal Route Table ID .",
+      "Value": {
+        "Ref": "admintsdevstandardprivatert1c"
+      }
+    },
+    "PrivateRouteTableD": {
+      "Description": "Internal Route Table ID .",
+      "Value": {
+        "Ref": "admintsdevstandardprivatert1d"
+      }
+    },
+    "PrivateRouteTableE": {
+      "Description": "Internal Route Table ID .",
+      "Value": {
+        "Ref": "admintsdevstandardprivatert1e"
+      }
+    },
+    "PrivatRouteTables": {
+      "Description": "[LIST] PrivatRouteTables Names",
+      "Value": "PrivateRouteTableA,PrivateRouteTableC,PrivateRouteTableD,PrivateRouteTableE"
+    },
+    "PublicRouteTable": {
+      "Description": "External Route Table ID .",
+      "Value": {
+        "Ref": "admintsdevstandardpublicrt"
+      }
+    },
+    "azA": {
+      "Description": "azA AZ ID",
+      "Value": "a"
+    },
+    "azC": {
+      "Description": "azC AZ ID",
+      "Value": "c"
+    },
+    "azD": {
+      "Description": "azD AZ ID",
+      "Value": "d"
+    },
+    "azE": {
+      "Description": "azE AZ ID",
+      "Value": "e"
+    },
+    "AZs": {
+      "Description": "[LIST] AZs Names",
+      "Value": "azA,azC,azD,azE"
+    },
+    "appprivateA": {
+      "Description": "admintsdevstandardappprivate1a1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardappprivate1a1"
+      }
+    },
+    "appprivateC": {
+      "Description": "admintsdevstandardappprivate1c1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardappprivate1c1"
+      }
+    },
+    "appprivateD": {
+      "Description": "admintsdevstandardappprivate1d1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardappprivate1d1"
+      }
+    },
+    "appprivateE": {
+      "Description": "admintsdevstandardappprivate1e1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardappprivate1e1"
+      }
+    },
+    "appprivateSubnets": {
+      "Description": "[LIST] appprivateSubnets Names",
+      "Value": "appprivateA,appprivateC,appprivateD,appprivateE"
+    },
+    "dbprivateA": {
+      "Description": "admintsdevstandarddbprivate1a1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandarddbprivate1a1"
+      }
+    },
+    "dbprivateC": {
+      "Description": "admintsdevstandarddbprivate1c1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandarddbprivate1c1"
+      }
+    },
+    "dbprivateD": {
+      "Description": "admintsdevstandarddbprivate1d1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandarddbprivate1d1"
+      }
+    },
+    "dbprivateE": {
+      "Description": "admintsdevstandarddbprivate1e1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandarddbprivate1e1"
+      }
+    },
+    "dbprivateSubnets": {
+      "Description": "[LIST] dbprivateSubnets Names",
+      "Value": "dbprivateA,dbprivateC,dbprivateD,dbprivateE"
+    },
+    "elbpublicA": {
+      "Description": "admintsdevstandardelbpublic1a1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbpublic1a1"
+      }
+    },
+    "elbpublicC": {
+      "Description": "admintsdevstandardelbpublic1c1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbpublic1c1"
+      }
+    },
+    "elbpublicD": {
+      "Description": "admintsdevstandardelbpublic1d1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbpublic1d1"
+      }
+    },
+    "elbpublicE": {
+      "Description": "admintsdevstandardelbpublic1e1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbpublic1e1"
+      }
+    },
+    "elbpublicSubnets": {
+      "Description": "[LIST] elbpublicSubnets Names",
+      "Value": "elbpublicA,elbpublicC,elbpublicD,elbpublicE"
+    },
+    "elbprivateA": {
+      "Description": "admintsdevstandardelbprivate1a1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbprivate1a1"
+      }
+    },
+    "elbprivateC": {
+      "Description": "admintsdevstandardelbprivate1c1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbprivate1c1"
+      }
+    },
+    "elbprivateD": {
+      "Description": "admintsdevstandardelbprivate1d1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbprivate1d1"
+      }
+    },
+    "elbprivateE": {
+      "Description": "admintsdevstandardelbprivate1e1 Subnet ID",
+      "Value": {
+        "Ref": "admintsdevstandardelbprivate1e1"
+      }
+    },
+    "elbprivateSubnets": {
+      "Description": "[LIST] elbprivateSubnets Names",
+      "Value": "elbprivateA,elbprivateC,elbprivateD,elbprivateE"
+    }
+  }
+}

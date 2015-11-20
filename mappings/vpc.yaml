@@ -1,0 +1,16 @@
+# NOTE
+# Naming standards for cloud resoruces are described at: https://confluence.huit.harvard.edu/pages/viewpage.action?title=%5BSTANDARD%5D+-+Cloud+Resource+Naming+Conventions&spaceKey=CLOPS
+
+
+group: admints
+context: standard
+appName: hcdo
+
+tags:
+    environment: dev
+    huit_assetid: 00910
+    lastmodifiedby: TBD
+    product: hcdoVPC
+
+Region: us-east-1
+CIDR: 100.64.30.0/20
